@@ -1,16 +1,21 @@
-chrome.runtime.onInstalled.addListener(function() {
-  chrome.storage.sync.set({color: '#3aa757'}, function() {
-    console.log("The color is green.");
-  });
+async function sendGetRequestTo (url) {
+  try {
+    await fetch(url);
+    console.log(`Url: ${url} is online`);
+  } catch (e) {
+    console.warn(`Url: ${url} is offline`);
+  }
+}
 
-  chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-    chrome.declarativeContent.onPageChanged.addRules([{
-      conditions: [
-        new chrome.declarativeContent.PageStateMatcher({
-          pageUrl: { hostEquals: 'developer.chrome.com' },
-        })
-      ],
-      actions: [new chrome.declarativeContent.ShowPageAction()]
-    }]);
+const defaultUrls = [
+  'http://cyoatta.xyz',
+  'https://cyoatta.xyz',
+  'https://www.google.com/',
+  'http://doesnotexist.qwerty',
+];
+
+chrome.storage.sync.get(['urls'], ({ urls }) => {
+  (urls || defaultUrls).forEach(url => {
+    sendGetRequestTo(url);
   });
 });

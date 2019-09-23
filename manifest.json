@@ -2,7 +2,13 @@
     "name": "Host checker",
     "version": "1.0",
     "description": "It should periodically check the configured hosts to see if they are still alive",
-    "permissions": ["activeTab", "declarativeContent", "storage"],
+    "permissions": [
+        "activeTab",
+        "declarativeContent",
+        "storage",
+        "http://*/",
+        "https://*/"
+    ],
     "background": {
         "scripts": ["background.js"],
         "persistent": false
