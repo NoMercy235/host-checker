@@ -27,3 +27,11 @@ export function isValidUrl (url) {
   const regex = new RegExp(expression);
   return url.match(regex);
 }
+
+export function generateUrlId (url) {
+  return `${url}-url`;
+}
+
+export function generateStatusId (url) {
+  return `${url}-status`;
+}

@@ -1,4 +1,11 @@
-import { isOnline, URL_REMOVED, URL_INFO_RECEIVED, URL_INFORMATION } from '../utils.js';
+import {
+  isOnline,
+  generateUrlId,
+  generateStatusId,
+  URL_REMOVED,
+  URL_INFO_RECEIVED,
+  URL_INFORMATION,
+} from '../utils.js';
 
 const container = document.getElementById('container');
 const urls = document.getElementById('urls');
@@ -11,37 +18,41 @@ chrome.storage.sync.get(
   }
 );
 
-function getOrCreateUrlNode ({ url, status }) {
-  const urlNode = container.querySelector(`*[id="${url}-url"]`);
-  const statusNode = container.querySelector(`*[id="${url}-status"]`);
-  if (urlNode && statusNode) {
-    statusNode.setAttribute(
-      'class',
-      `status ${isOnline(status) ? 'isOnline' : 'isOffline'}`
-    );
-    return { urlNode, statusNode };
-  }
+function getUrlAndStatusNodes (url) {
+  const urlNode = container.querySelector(`*[id="${generateUrlId(url)}"]`);
+  const statusNode = container.querySelector(`*[id="${generateStatusId(url)}"]`);
+  return { urlNode, statusNode };
+}
 
-  const urlDiv = document.createElement('div');
-  urlDiv.setAttribute('id', `${url}-url`);
-
-  const statusDiv = document.createElement('div');
-  statusDiv.setAttribute('id', `${url}-status`);
-  statusDiv.setAttribute(
+function setStatusClasses (statusNode, status) {
+  statusNode.setAttribute(
     'class',
     `status ${isOnline(status) ? 'isOnline' : 'isOffline'}`
   );
-
-  urls.appendChild(urlDiv);
-  statuses.appendChild(statusDiv);
-
-  return { urlNode: urlDiv, statusNode: statusDiv };
-
 }
 
-function setRowInfo ({ urlNode, statusNode }, { url, status }) {
+function getOrCreateUrlNode ({ url, status }) {
+  let { urlNode, statusNode } = getUrlAndStatusNodes(url);
+  if (urlNode && statusNode) {
+    setStatusClasses(statusNode, status);
+    return { urlNode, statusNode };
+  }
+
+  urlNode = document.createElement('div');
+  urlNode.setAttribute('id', `${generateUrlId(url)}`);
+
+  statusNode = document.createElement('div');
+  statusNode.setAttribute('id', `${generateStatusId(url)}`);
+  setStatusClasses(statusNode, status);
+
+  urls.appendChild(urlNode);
+  statuses.appendChild(statusNode);
+
+  return { urlNode, statusNode };
+}
+
+function setRowInfo ({ urlNode, statusNode }, { url }) {
   urlNode.innerText = url;
-  // statusNode.innerText = status;
 }
 
 function setUrlNode (metadata) {
@@ -50,8 +61,7 @@ function setUrlNode (metadata) {
 }
 
 function removeUrlNode ({ url }) {
-  const urlNode = container.querySelector(`*[id="${url}-url"]`);
-  const statusNode = container.querySelector(`*[id="${url}-status"]`);
+  let { urlNode, statusNode } = getUrlAndStatusNodes(url);
   urls.removeChild(urlNode);
   statuses.removeChild(statusNode);
 }
