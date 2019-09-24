@@ -16,7 +16,7 @@ function getUrlsInfo () {
 
 async function setUrlStatus (url, isUp) {
   const urlsInfo = await getUrlsInfo();
-  const shouldUpdate = urlsInfo[url].status !== getStatus(isUp);
+  // const shouldUpdate = urlsInfo[url].status !== getStatus(isUp);
 
   urlsInfo[url] = {
     url,
@@ -24,11 +24,11 @@ async function setUrlStatus (url, isUp) {
     lastSeen: (new Date()).toString(),
   };
 
-  if (shouldUpdate) {
-    chrome.storage.sync.set({
-      [URL_INFORMATION]: urlsInfo,
-    });
-  }
+  // if (shouldUpdate) {
+  //   chrome.storage.sync.set({
+  //     [URL_INFORMATION]: urlsInfo,
+  //   });
+  // }
 
   chrome.runtime.sendMessage({
     type: URL_INFO_RECEIVED,
@@ -49,16 +49,11 @@ async function sendGetRequestTo (url) {
   await setUrlStatus(url, isUp);
 }
 
-const defaultUrls = [
-  'http://cyoatta.xyz',
-  'https://cyoatta.xyz',
-  'https://www.google.com/',
-  'http://doesnotexist.qwerty',
-];
-
-chrome.storage.sync.get(['urls'], ({ urls }) => {
+chrome.storage.sync.get(
+  [URL_INFORMATION],
+  ({ [URL_INFORMATION]: urlsInfo }) => {
   setInterval(() => {
-    (urls || defaultUrls).forEach(url => {
+    Object.values(urlsInfo).forEach(({ url }) => {
       sendGetRequestTo(url);
     });
   }, 5000);
