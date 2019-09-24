@@ -1,4 +1,4 @@
-import { ACTION } from './utils.js';
+import { ACTION } from '../utils.js';
 
 const container = document.getElementById('container');
 const urls = document.getElementById('urls');
