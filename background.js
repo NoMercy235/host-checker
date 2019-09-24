@@ -1,18 +1,9 @@
 import {
   getStatus,
+  getUrlsInfo,
   URL_INFO_RECEIVED,
   URL_INFORMATION,
 } from './utils.js';
-
-function getUrlsInfo () {
-  return new Promise(resolve => {
-    chrome.storage.sync.get(
-      [URL_INFORMATION],
-      ({ [URL_INFORMATION]: urlsInfo }) => {
-        resolve(urlsInfo || {});
-      });
-    })
-}
 
 async function setUrlStatus (url, isUp) {
   const urlsInfo = await getUrlsInfo();

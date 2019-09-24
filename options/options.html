@@ -4,11 +4,29 @@
     <link rel="stylesheet" href="./options.css">
 </head>
 <body>
-<div id="buttonDiv">
-</div>
+<h1>Host checker!</h1>
+
 <div>
-    <p>Choose a different background color!</p>
+    <label for="urlInput">Add a URL:</label>
+    <input id="urlInput" type="text" />
+    <button id="addUrlBtn">Add</button>
 </div>
+
+<h3>List of current URLs</h3>
+
+<table id="urlTable">
+    <thead>
+        <th>
+            URL
+        </th>
+        <th>
+            Actions
+        </th>
+    </thead>
+    <tbody id="urlTableBody">
+    </tbody>
+</table>
+
 </body>
-<script src="options.js"></script>
+<script type="module" src="options.js"></script>
 </html>
