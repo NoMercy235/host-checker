@@ -15,6 +15,10 @@ function getOrCreateUrlNode ({ url, status }) {
   const urlNode = container.querySelector(`*[id="${url}-url"]`);
   const statusNode = container.querySelector(`*[id="${url}-status"]`);
   if (urlNode && statusNode) {
+    statusNode.setAttribute(
+      'class',
+      `status ${isOnline(status) ? 'isOnline' : 'isOffline'}`
+    );
     return { urlNode, statusNode };
   }
 
