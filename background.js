@@ -16,15 +16,19 @@ function getUrlsInfo () {
 
 async function setUrlStatus (url, isUp) {
   const urlsInfo = await getUrlsInfo();
+  const shouldUpdate = urlsInfo[url].status !== getStatus(isUp);
+
   urlsInfo[url] = {
     url,
     status: getStatus(isUp),
     lastSeen: (new Date()).toString(),
   };
 
-  chrome.storage.sync.set({
-    [URL_INFORMATION]: urlsInfo,
-  });
+  if (shouldUpdate) {
+    chrome.storage.sync.set({
+      [URL_INFORMATION]: urlsInfo,
+    });
+  }
 
   chrome.runtime.sendMessage({
     type: URL_INFO_RECEIVED,
