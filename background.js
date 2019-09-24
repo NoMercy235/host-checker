@@ -1,24 +1,34 @@
-import { ACTION } from './utils.js';
+import {
+  getStatus,
+  URL_INFO_RECEIVED,
+  URL_INFORMATION,
+} from './utils.js';
 
-function getUrlStatuses () {
+function getUrlsInfo () {
   return new Promise(resolve => {
-    chrome.storage.sync.get(['urlStatuses'], ({ urlStatuses }) => {
-      resolve(urlStatuses || {});
-    });
-  })
+    chrome.storage.sync.get(
+      [URL_INFORMATION],
+      ({ [URL_INFORMATION]: urlsInfo }) => {
+        resolve(urlsInfo || {});
+      });
+    })
 }
 
 async function setUrlStatus (url, isUp) {
-  const urlStatuses = await getUrlStatuses();
-  urlStatuses[url] = isUp;
+  const urlsInfo = await getUrlsInfo();
+  urlsInfo[url] = {
+    url,
+    status: getStatus(isUp),
+    lastSeen: (new Date()).toString(),
+  };
 
   chrome.storage.sync.set({
-    urlStatuses
+    [URL_INFORMATION]: urlsInfo,
   });
 
   chrome.runtime.sendMessage({
-    type: ACTION,
-    payload: { url, isUp },
+    type: URL_INFO_RECEIVED,
+    payload: urlsInfo[url],
   });
 }
 
@@ -27,10 +37,10 @@ async function sendGetRequestTo (url) {
   try {
     await fetch(url);
     isUp = true;
-    console.log(`Url: ${url} is online`);
+    // console.log(`Url: ${url} is online`);
   } catch (e) {
     isUp = false;
-    console.warn(`Url: ${url} is offline`);
+    // console.warn(`Url: ${url} is offline`);
   }
   await setUrlStatus(url, isUp);
 }
@@ -47,5 +57,5 @@ chrome.storage.sync.get(['urls'], ({ urls }) => {
     (urls || defaultUrls).forEach(url => {
       sendGetRequestTo(url);
     });
-  }, 3000);
+  }, 5000);
 });

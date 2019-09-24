@@ -1,12 +1,15 @@
-import { ACTION } from '../utils.js';
+import { URL_INFO_RECEIVED, URL_INFORMATION } from '../utils.js';
 
 const container = document.getElementById('container');
 const urls = document.getElementById('urls');
 const statuses = document.getElementById('statuses');
 
-function getStatus (isUp) {
-  return isUp ? 'Online' : 'Offline';
-}
+chrome.storage.sync.get(
+  [URL_INFORMATION],
+  ({ [URL_INFORMATION]: urlsInfo }) => {
+    Object.values(urlsInfo).forEach(setUrlNode);
+  }
+);
 
 function getOrCreateUrlNode ({ url }) {
   const urlNode = container.querySelector(`*[id="${url}-url"]`);
@@ -28,9 +31,9 @@ function getOrCreateUrlNode ({ url }) {
 
 }
 
-function setRowInfo ({ urlNode, statusNode }, { url, isUp }) {
+function setRowInfo ({ urlNode, statusNode }, { url, status }) {
   urlNode.innerText = url;
-  statusNode.innerText = getStatus(isUp);
+  statusNode.innerText = status;
 }
 
 function setUrlNode (metadata) {
@@ -41,7 +44,7 @@ function setUrlNode (metadata) {
 chrome.runtime.onMessage.addListener(
   (request, sender, senderResponse) => {
     switch (request.type) {
-      case ACTION: {
+      case URL_INFO_RECEIVED: {
         setUrlNode(request.payload);
         break;
       }
