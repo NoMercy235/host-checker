@@ -25,10 +25,8 @@ async function sendGetRequestTo (url) {
   try {
     await fetch(url);
     isUp = true;
-    // console.log(`Url: ${url} is online`);
   } catch (e) {
     isUp = false;
-    // console.warn(`Url: ${url} is offline`);
   }
   await setUrlStatus(url, isUp);
 }

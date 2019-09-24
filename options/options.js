@@ -1,6 +1,5 @@
 import {
   isValidUrl,
-  getStatus,
   getUrlsInfo,
   URL_ADDED,
   URL_REMOVED,
@@ -71,7 +70,7 @@ addUrlBtn.addEventListener('click', async () => {
 
   const urlsInfo = await getUrlsInfo();
 
-  urlsInfo[url] = { url, status: getStatus(false) };
+  urlsInfo[url] = { url };
 
   saveUrlsInfo(urlsInfo);
 
