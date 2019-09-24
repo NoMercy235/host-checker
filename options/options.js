@@ -79,6 +79,9 @@ addUrlBtn.addEventListener('click', async () => {
     type: URL_ADDED,
     payload: urlsInfo[url]
   });
+
+  urlInput.value = '';
+  generateRow({ url });
 });
 
 function saveUrlsInfo (urlsInfo) {
