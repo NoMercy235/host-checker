@@ -5,14 +5,25 @@ import {
   URL_INFORMATION,
 } from './utils.js';
 
+async function setLocalUrlsInfo (overrideUrlsInfo) {
+  const urlsInfo = overrideUrlsInfo || await getUrlsInfo();
+  chrome.storage.local.set({
+    [URL_INFORMATION]: urlsInfo
+  });
+}
+
+setLocalUrlsInfo();
+
 async function setUrlStatus (url, isUp) {
-  const urlsInfo = await getUrlsInfo();
+  const urlsInfo = await getUrlsInfo(true);
 
   urlsInfo[url] = {
     url,
     status: getStatus(isUp),
     lastSeen: (new Date()).toString(),
   };
+
+  await setLocalUrlsInfo(urlsInfo);
 
   chrome.runtime.sendMessage({
     type: URL_INFO_RECEIVED,

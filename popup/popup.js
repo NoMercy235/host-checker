@@ -11,10 +11,10 @@ const container = document.getElementById('container');
 const urls = document.getElementById('urls');
 const statuses = document.getElementById('statuses');
 
-chrome.storage.sync.get(
+chrome.storage.local.get(
   [URL_INFORMATION],
   ({ [URL_INFORMATION]: urlsInfo }) => {
-    Object.values(urlsInfo).forEach(setUrlNode);
+    Object.values(urlsInfo || {}).forEach(setUrlNode);
   }
 );
 

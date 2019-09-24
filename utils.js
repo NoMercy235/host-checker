@@ -12,9 +12,9 @@ export function isOnline (input) {
   return input === true || input === 'Online';
 }
 
-export function getUrlsInfo () {
+export function getUrlsInfo (local) {
   return new Promise(resolve => {
-    chrome.storage.sync.get(
+    chrome.storage[local ? 'local' : 'sync'].get(
       [URL_INFORMATION],
       ({ [URL_INFORMATION]: urlsInfo }) => {
         resolve(urlsInfo || {});
