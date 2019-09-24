@@ -1,4 +1,4 @@
-import { isOnline, URL_INFO_RECEIVED, URL_INFORMATION } from '../utils.js';
+import { isOnline, URL_REMOVED, URL_INFO_RECEIVED, URL_INFORMATION } from '../utils.js';
 
 const container = document.getElementById('container');
 const urls = document.getElementById('urls');
@@ -45,11 +45,22 @@ function setUrlNode (metadata) {
   setRowInfo(rowNodes, metadata);
 }
 
+function removeUrlNode ({ url }) {
+  const urlNode = container.querySelector(`*[id="${url}-url"]`);
+  const statusNode = container.querySelector(`*[id="${url}-status"]`);
+  urls.removeChild(urlNode);
+  statuses.removeChild(statusNode);
+}
+
 chrome.runtime.onMessage.addListener(
   (request, sender, senderResponse) => {
     switch (request.type) {
       case URL_INFO_RECEIVED: {
         setUrlNode(request.payload);
+        break;
+      }
+      case URL_REMOVED: {
+        removeUrlNode(request.payload);
         break;
       }
       default:

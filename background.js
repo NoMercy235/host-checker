@@ -7,19 +7,12 @@ import {
 
 async function setUrlStatus (url, isUp) {
   const urlsInfo = await getUrlsInfo();
-  // const shouldUpdate = urlsInfo[url].status !== getStatus(isUp);
 
   urlsInfo[url] = {
     url,
     status: getStatus(isUp),
     lastSeen: (new Date()).toString(),
   };
-
-  // if (shouldUpdate) {
-  //   chrome.storage.sync.set({
-  //     [URL_INFORMATION]: urlsInfo,
-  //   });
-  // }
 
   chrome.runtime.sendMessage({
     type: URL_INFO_RECEIVED,
@@ -40,12 +33,14 @@ async function sendGetRequestTo (url) {
   await setUrlStatus(url, isUp);
 }
 
-chrome.storage.sync.get(
-  [URL_INFORMATION],
-  ({ [URL_INFORMATION]: urlsInfo }) => {
-  setInterval(() => {
-    Object.values(urlsInfo).forEach(({ url }) => {
-      sendGetRequestTo(url);
-    });
-  }, 5000);
-});
+setInterval(() => {
+  chrome.storage.sync.get(
+    [URL_INFORMATION],
+    ({ [URL_INFORMATION]: urlsInfo }) => {
+      Object.values(urlsInfo).forEach(({ url }) => {
+        sendGetRequestTo(url);
+      });
+    }
+  )},
+  5000
+);
