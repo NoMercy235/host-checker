@@ -1,4 +1,4 @@
-import { URL_INFO_RECEIVED, URL_INFORMATION } from '../utils.js';
+import { isOnline, URL_INFO_RECEIVED, URL_INFORMATION } from '../utils.js';
 
 const container = document.getElementById('container');
 const urls = document.getElementById('urls');
@@ -11,7 +11,7 @@ chrome.storage.sync.get(
   }
 );
 
-function getOrCreateUrlNode ({ url }) {
+function getOrCreateUrlNode ({ url, status }) {
   const urlNode = container.querySelector(`*[id="${url}-url"]`);
   const statusNode = container.querySelector(`*[id="${url}-status"]`);
   if (urlNode && statusNode) {
@@ -23,6 +23,10 @@ function getOrCreateUrlNode ({ url }) {
 
   const statusDiv = document.createElement('div');
   statusDiv.setAttribute('id', `${url}-status`);
+  statusDiv.setAttribute(
+    'class',
+    `status ${isOnline(status) ? 'isOnline' : 'isOffline'}`
+  );
 
   urls.appendChild(urlDiv);
   statuses.appendChild(statusDiv);
@@ -33,7 +37,7 @@ function getOrCreateUrlNode ({ url }) {
 
 function setRowInfo ({ urlNode, statusNode }, { url, status }) {
   urlNode.innerText = url;
-  statusNode.innerText = status;
+  // statusNode.innerText = status;
 }
 
 function setUrlNode (metadata) {
