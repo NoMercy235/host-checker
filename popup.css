@@ -1,0 +1,12 @@
+#container {
+    display: flex;
+    width: 100%;
+}
+
+#urls {
+    flex: 3 3;
+}
+
+#statuses {
+    flex: 1 1;
+}
