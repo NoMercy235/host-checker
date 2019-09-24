@@ -3,12 +3,18 @@ import {
   getStatus,
   getUrlsInfo,
   URL_ADDED,
+  URL_REMOVED,
   URL_INFORMATION,
 } from '../utils.js';
 
 const urlInput = document.getElementById('urlInput');
 const addUrlBtn = document.getElementById('addUrlBtn');
 const tableBody = document.getElementById('urlTableBody');
+
+function removeRow (url) {
+  const targetRow = document.getElementById(url);
+  tableBody.removeChild(targetRow);
+}
 
 function addUrlColumn (tr, cell) {
   const urlTd = document.createElement('td');
@@ -20,12 +26,30 @@ function addUrlColumn (tr, cell) {
 function addActionsColumn (tr, url) {
   const actionsTd = document.createElement('td');
   // TODO: implement delete action
+
+  const removeUrlDiv = document.createElement('button');
+  removeUrlDiv.innerText = 'x';
+  removeUrlDiv.addEventListener('click', async () => {
+    const urlsInfo = await getUrlsInfo();
+    chrome.runtime.sendMessage({
+      type: URL_REMOVED,
+      payload: urlsInfo[url]
+    });
+    delete urlsInfo[url];
+    saveUrlsInfo(urlsInfo);
+    removeRow(url);
+  });
+
+  actionsTd.appendChild(removeUrlDiv);
+  tr.appendChild(actionsTd);
 }
 
 function generateRow ({ url }) {
   const tr = document.createElement('tr');
+  tr.setAttribute('id', url);
 
   addUrlColumn(tr, url);
+  addActionsColumn(tr, url);
 
   tableBody.appendChild(tr);
 }
@@ -49,12 +73,16 @@ addUrlBtn.addEventListener('click', async () => {
 
   urlsInfo[url] = { url, status: getStatus(false) };
 
-  chrome.storage.sync.set({
-    [URL_INFORMATION]: urlsInfo,
-  });
+  saveUrlsInfo(urlsInfo);
 
   chrome.runtime.sendMessage({
     type: URL_ADDED,
     payload: urlsInfo[url]
   });
 });
+
+function saveUrlsInfo (urlsInfo) {
+  chrome.storage.sync.set({
+    [URL_INFORMATION]: urlsInfo,
+  });
+}

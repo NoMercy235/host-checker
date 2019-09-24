@@ -1,5 +1,6 @@
 export const URL_INFORMATION = 'urlInformation';
 export const URL_ADDED = 'urlAdded';
+export const URL_REMOVED = 'urlRemoved';
 
 export const URL_INFO_RECEIVED = 'url_status_changed';
 
