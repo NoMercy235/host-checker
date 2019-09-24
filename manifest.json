@@ -10,7 +10,7 @@
         "https://*/"
     ],
     "background": {
-        "page": "background.html",
+        "page": "background/background.html",
         "persistent": false
     },
     "browser_action": {

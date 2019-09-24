@@ -3,7 +3,7 @@ import {
   getUrlsInfo,
   URL_INFO_RECEIVED,
   URL_INFORMATION,
-} from './utils.js';
+} from '../utils.js';
 
 async function setLocalUrlsInfo (overrideUrlsInfo) {
   const urlsInfo = overrideUrlsInfo || await getUrlsInfo();
