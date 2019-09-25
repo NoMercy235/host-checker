@@ -23,6 +23,13 @@
         }
     },
     "options_page": "options/options.html",
+    "content_scripts": [{
+        "matches": [
+            "http://*/*",
+            "https://*/*"
+        ],
+        "js": ["content-scripts/show-notification.js"]
+    }],
     "icons": {
         "16": "images/get_started16.png",
         "32": "images/get_started32.png",

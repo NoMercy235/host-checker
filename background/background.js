@@ -3,6 +3,7 @@ import {
   getUrlsInfo,
   URL_INFO_RECEIVED,
   URL_INFORMATION,
+  URL_LOST_CONNECTION,
 } from '../utils.js';
 
 async function setLocalUrlsInfo (overrideUrlsInfo) {
@@ -42,14 +43,31 @@ async function sendGetRequestTo (url) {
   await setUrlStatus(url, isUp);
 }
 
-setInterval(() => {
-  chrome.storage.sync.get(
-    [URL_INFORMATION],
-    ({ [URL_INFORMATION]: urlsInfo }) => {
-      Object.values(urlsInfo).forEach(({ url }) => {
-        sendGetRequestTo(url);
-      });
-    }
-  )},
+setInterval(async () => {
+    const urlsInfo = await getUrlsInfo();
+    Object.values(urlsInfo || {}).forEach(({ url }) => {
+      sendGetRequestTo(url);
+    });
+  },
   5000
+);
+
+setInterval(() => {
+  console.log('[BG]: send message for content script');
+  chrome.runtime.sendMessage({
+    type: URL_LOST_CONNECTION,
+    payload: 'some url',
+  })
+}, 3000);
+
+chrome.runtime.onMessage.addListener(
+  (request, sender, senderResponse) => {
+    switch (request.type) {
+      case 'test_action': {
+        console.log('[BG]: received message for content script');
+        break;
+      }
+      default:
+    }
+  }
 );

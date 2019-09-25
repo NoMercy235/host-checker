@@ -53,12 +53,9 @@ function generateRow ({ url }) {
   tableBody.appendChild(tr);
 }
 
-chrome.storage.sync.get(
-  [URL_INFORMATION],
-  ({ [URL_INFORMATION]: urlsInfo }) => {
-    Object.values(urlsInfo).forEach(generateRow);
-  }
-);
+getUrlsInfo().then(urlsInfo => {
+  Object.values(urlsInfo).forEach(generateRow);
+});
 
 addUrlBtn.addEventListener('click', async () => {
   const url = urlInput.value;
